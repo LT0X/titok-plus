@@ -1,0 +1,25 @@
+Name: cron
+Host: 0.0.0.0
+Port: 7002
+
+
+# RPC 配置
+UserRpc:
+  Endpoints:
+    - 127.0.0.1:8081
+  NonBlock: true
+  Timeout: 10000
+
+
+VideoRpc:
+  Endpoints:
+    - 127.0.0.1:8082
+  NonBlock: true
+  Timeout: 10000
+
+Redis:
+  Address: 8.134.108.219:6379
+  Password: XTCqq+582
+
+
+

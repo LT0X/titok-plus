@@ -1,0 +1,58 @@
+syntax = "v1"
+
+import "/apis/mod.api"
+
+@server(
+    middleware: Auth
+    group: contact
+)
+
+service app {
+    @handler FriendList // 获取好友列表
+    get /douyin/relation/friend/list (FriendListRequest) returns (FriendListReply)
+
+    @handler SendMessage // 发送消息
+    post /douyin/message/action (SendMessageRequest) returns (SendMessageReply)
+
+    @handler HistoryMessage // 获取聊天记录
+    get /douyin/message/chat (HistoryMessageRequest) returns (HistoryMessageReply)
+}
+
+// 获取好友列表
+type (
+    FriendListRequest {
+        UserId int64    `form:"user_id"`
+        Token  string `form:"token"`
+    }
+    FriendListReply {
+        BaseResponse
+        UserInfoList []UserInfo `json:"user_list"` // 没错就是这个名字
+    }
+
+)
+
+// 发送消息
+type (
+    SendMessageRequest {
+        Token      string `from:"token"`
+        ToUserId   int64    `from:"to_user_id"`
+        Content    string `from:"content"`
+        ActionType int64    `from:"action_type"`
+    }
+    SendMessageReply {
+        BaseResponse
+    }
+)
+
+// 获取聊天记录
+type (
+    HistoryMessageRequest {
+        Token    string `form:"token"`
+        ToUserId int64    `form:"to_user_id"`
+        PreMsgTime int64  `form:"pre_msg_time"`
+    }
+    HistoryMessageReply {
+        BaseResponse
+        MessageList []Message `json:"message_list"`
+    }
+)

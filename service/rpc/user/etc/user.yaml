@@ -1,0 +1,17 @@
+Name: user.rpc
+ListenOn: 0.0.0.0:8081
+Timeout: 10000
+
+DBList:
+  Mysql:
+    Host: 127.0.0.1
+    Port: 3306
+    User: root
+    PassWord: xtc
+    DataBase: titok_plus_user
+    CharSet: utf8mb4
+    ParseTime: True
+    Loc: Local
+  Redis:
+    Address: 8.134.108.219:6379
+    Password: XTCqq+582

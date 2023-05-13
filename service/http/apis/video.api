@@ -1,0 +1,136 @@
+syntax = "v1"
+
+import "/apis/mod.api"
+
+@server(
+	group: video
+)
+
+service app {
+	//视频流列表
+	@handler Feed
+	get /douyin/feed (FeedRequest) returns (FeedResponse)
+}
+
+type (
+
+	FeedRequest{
+		LatestTime int64 `form:"latest_time"`
+		Token string  `form:"token"`
+	}
+
+	FeedResponse{
+		BaseResponse
+		VideoList []Video `json:"video_list"`
+		NextTime int64  `json:"nextTime"`
+	}
+
+
+)
+
+@server(
+	group: video
+	middleware : Auth
+)
+
+service app {
+
+	//发布视频
+	@handler PublishVideo
+	post  /douyin/publish/action (PublishVideoRequest) returns (PublishVideoResponse)
+
+	//视频发布列表
+	@handler PublishVideoList
+	get  /douyin/publish/list (PublishVideoListRequest) returns (PublishVideoListResponse)
+
+	//喜欢视频列表
+	@handler FavoriteList
+	get  /douyin/favorite/list (FavoriteListRequest) returns (FavoriteListResponse)
+
+	//视频点赞操作
+	@handler FavoriteAction
+	post  /douyin/favorite/action (FavoriteActionRequest) returns (FavoriteActionResponse)
+
+	//视频评论操作
+	@handler CommentAction
+	post /douyin/comment/action  (CommentActionRequest) returns (CommentActionResponse)
+
+	//视频评论列表
+	@handler CommentList
+	get /douyin/comment/list (CommentListRequest) returns (CommentListResponse)
+
+
+}
+
+type (
+
+	PublishVideoRequest{
+		Token string  `form:"token"`
+		Title string  `form:"title"`
+	}
+
+	PublishVideoResponse{
+		BaseResponse
+	}
+
+	PublishVideoListRequest{
+		UserId int64 `form:"user_id"`
+		Token string  `form:"token"`
+	}
+
+	PublishVideoListResponse{
+		BaseResponse
+		VideoList []Video `json:"video_list"`
+	}
+
+
+	FavoriteListRequest{
+		UserId int64 `form:"user_id"`
+		Token string  `form:"token"`
+	}
+
+	FavoriteListResponse{
+		BaseResponse
+		VideoList []Video `json:"video_list"`
+	}
+
+	FavoriteActionRequest{
+		Token string `form:"token"`
+		VideoId int64 `form:"video_id"`
+		ActionType int32 `form:"action_type"`
+	}
+
+	FavoriteActionResponse{
+		BaseResponse
+	}
+
+	CommentActionRequest{
+		Token string `form:"token"`
+		VideoId int64  `form:"video_id"`
+		ActionType int32 `form:"action_type"`
+		CommentText string `form:"comment_text"`
+		CommentId string  `form:"comment_Id"`
+	}
+
+	CommentActionResponse{
+		BaseResponse
+		Comment Comment `json:"comment"`
+	}
+
+	CommentListRequest{
+		Token   string `form:"token"`
+		VideoId int64    `form:"video_id"`
+	}
+
+	CommentListResponse{
+		BaseResponse
+		CommentList []Comment `json:"comment_list"`
+	}
+
+)
+
+
+
+
+
+

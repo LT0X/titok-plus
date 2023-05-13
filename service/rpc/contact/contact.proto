@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+
+package contact;
+
+option go_package = "./contact";
+
+//goctl rpc protoc contact.proto --go_out=. --go-grpc_out=. --zrpc_out=. --style go_zero
+
+// 空消息
+message Empty {}
+
+// 消息结构体
+message Message {
+  int64 Id = 1;
+  string Content = 2;
+  int64 CreateTime = 3;
+  int64 FromUserId= 4;
+  int64 ToUserId = 5;
+}
+
+service Contact {
+  rpc CreateMessage (CreateMessageRequest) returns (Empty);
+  rpc GetLatestMessage (GetLatestMessageRequest) returns (GetLatestMessageResponse);
+  rpc GetMessageList (GetMessageListRequest) returns (GetMessageListResponse);
+
+}
+
+message GetLatestMessageRequest {
+  int64 FromUserAId = 1;
+  int64 ToUserBId = 2;
+  int64 PreMsgTime = 3;
+}
+
+message GetLatestMessageResponse {
+  Message Message = 1;
+}
+
+message CreateMessageRequest {
+  int64 FromUserId = 1;
+  int64 ToUserId = 2;
+  string content = 3;
+}
+
+message GetMessageListRequest {
+  int64 FromUserId = 1;
+  int64 ToUserId = 2;
+  int64 PreMsgTime = 3;
+}
+
+message GetMessageListResponse {
+  repeated Message Messages = 1;
+}
+

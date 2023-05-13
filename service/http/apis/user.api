@@ -1,0 +1,120 @@
+syntax = "v1"
+
+import "/apis/mod.api"
+
+
+@server (
+	group: user
+)
+
+service app {
+	
+	@handler Register
+	post /douyin/user/register (RegisterRequest) returns (RegisterResponse)
+	
+	@handler Login
+	post /douyin/user/login (LoginRequest) returns (LoginResponse)
+	
+}
+
+type (
+	RegisterRequest {
+		Username string `form:"username"`
+		Password string `form:"password"`
+	}
+
+	RegisterResponse {
+		BaseResponse
+		UserId int64  `json:"user_id"`
+		Token  string `json:"token"`
+	}
+
+	LoginRequest {
+		Username string `form:"username"`
+		Password string `form:"password"`
+	}
+
+	LoginResponse {
+		BaseResponse
+		UserId int64  `json:"user_id"`
+		Token  string `json:"token"`
+	}
+)
+
+@server (
+	group:user
+	middleware : Auth
+)
+service app{
+	
+	@handler GetUserInfo
+	get /douyin/user (UserInfoRequest) returns (UserInfoResponse)
+
+	@handler FollowsAction
+	post /douyin/relation/action (FollowsActionRequest)  returns (FollowsActionResponse)
+
+	@handler FollowList
+	get /douyin/relatioin/follow/list (FollowListRequest) returns (FollowsActionResponse)
+
+	@handler FanList
+	get /douyin/relation/follower/list (FanListRequest) returns (FanListResponse)
+
+
+	
+}
+
+//用户信息
+type (
+	UserInfoRequest {
+		UserId int64  `form:"user_id"`
+		Token  string `form:"token"`
+	}
+
+	UserInfoResponse {
+		BaseResponse
+		User UserInfo `json:"user"`
+	}
+)
+
+//关注操作
+type (
+	FollowsActionRequest {
+		token string `form:"token"`
+		ToUserId int64 `form:"to_user_id"`
+		ActionType int32  `form:"action_type"`
+	}
+
+	FollowsActionResponse {
+		BaseResponse
+	}
+)
+
+//关注列表
+type (
+
+	FollowListRequest{
+		Token string  `form:"token"`
+		UserId int64  `form:"user_id"`
+	}
+
+	FollowListResponse{
+		BaseResponse
+		UserList []UserInfo `json:"user_list"`
+	}
+
+)
+
+//粉丝列表
+type (
+
+	FanListRequest{
+		Token string  `form:"token"`
+		UserId int64  `form:"user_id"`
+	}
+
+	FanListResponse{
+		BaseResponse
+		UserList []UserInfo `json:"user_list"`
+	}
+
+)

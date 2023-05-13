@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package user;
+option go_package="./user";
+
+
+//goctl rpc protoc user.proto --go_out=. --go-grpc_out=. --zrpc_out=. --style go_zero
+
+message UserInfo{
+   int64  Id =1;
+   string Name = 2;
+   int64  FollowCount = 3;
+   int64  FollowerCount = 4;
+   string Avatar  = 6;
+   string BackgroundImage = 7;
+   string Signature = 8;
+   int64  TotalFavorited = 9;
+   int64  WorkCount = 10;
+   int64  FavoriteCount = 11;
+
+}
+
+message Account{
+  int64  UserInfoId = 1;
+  string  UserName = 2;
+  string  Password = 3;
+}
+
+message Empty{
+}
+
+
+service User {
+  rpc IsExitUser (IsExitUserRequest) returns (IsExitUserResponse);
+  rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse);
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+  rpc GetAccountByName (GetAccountByNameRequest) returns (GetAccountByNameResponse);
+  rpc AddUserWorkCount (AddUserWorkCountRequest) returns (Empty);
+  rpc SyncUserFavorite(SyncUserFavoriteRequest) returns (Empty);
+  rpc SyncUserTotalFavorite (SyncUserTotalFavoriteRequest) returns (Empty);
+}
+
+message  IsExitUserRequest {
+  string  UserName = 1;
+}
+
+message  IsExitUserResponse{
+  bool IsExit = 1;
+}
+
+message GetUserByIdRequest {
+  int64  UserId = 1;
+}
+
+message GetUserByIdResponse {
+  UserInfo UserInfo = 1;
+}
+
+message CreateUserRequest{
+  string  UserName = 1;
+  string  Password = 2;
+}
+
+message CreateUserResponse{
+  int64  UserId = 1;
+}
+
+message GetAccountByNameRequest{
+  string UserName = 1;
+}
+
+message GetAccountByNameResponse{
+  Account Account = 1;
+}
+
+message  AddUserWorkCountRequest{
+  int64  UserInfoId = 1 ;
+}
+
+message SyncUserFavoriteRequest{
+  repeated string LikeIds = 1;
+  repeated string CancelIds = 2;
+  int64 UserId = 3;
+}
+
+message SyncUserTotalFavoriteRequest{
+  repeated int64 UserInfoIds = 1;
+  repeated int64 UserTotalCounts = 2;
+}
+
+
+
+
+

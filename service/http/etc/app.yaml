@@ -1,0 +1,25 @@
+Name: app
+Host: 127.0.0.1
+Port: 9090
+
+Timeout: 10000
+
+Path:
+  StaticPath: static/
+
+UserRpc:
+  Endpoints:
+    - 127.0.0.1:8081
+  NonBlock: true
+  Timeout: 10000
+
+
+VideoRpc:
+  Endpoints:
+    - 127.0.0.1:8082
+  NonBlock: true
+  Timeout: 10000
+
+Auth:
+  AccessSecret : C++JavaGolang
+  AccessExpire : 1296000

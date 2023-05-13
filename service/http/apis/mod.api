@@ -1,0 +1,70 @@
+syntax = "v1"
+
+//common
+type(
+    BaseResponse{
+        StatusCode int64 `json:"status_code"`
+        StatusMsg string  `json:"status_msg"`
+    }
+)
+
+//User
+type(
+    UserInfo {
+        Id              int64  `json:"id" gorm:"primary key"`
+        Name            string `json:"name"`
+        FollowCount     int64  `json:"follow_count"`
+        FollowerCount   int64  `json:"follower_count"`
+        IsFollow        bool   `json:"is_follow" gorm:"-"`
+        Avatar          string `json:"avatar"`
+        BackgroundImage string `json:"background_image"`
+        Signature       string `json:"signature"`
+        TotalFavorited  int64  `json:"total_favorited"`
+        WorkCount       int64  `json:"work_count"`
+        FavoriteCount   int64  `json:"favorite_count"`
+    }
+)
+
+
+//video
+type (
+
+    Video {
+        Id            int64 `json:"id"`
+        UserInfoId    int64   `json:"-"`
+        Author        *UserInfo `json:"author" gorm:"-"`
+        PlayUrl       string    `json:"play_url"`
+        CoverUrl      string    `json:"cover_url"`
+        FavoriteCount int64     `json:"favorite_count"`
+        CommentCount  int64     `json:"comment_count"`
+        IsFavorite    bool      `json:"is_favorite" gorm:"-"`
+        Title         string    `json:"title"`
+    }
+
+     Comment{
+        Id         int64     `json:"id"`
+        UserInfoId int64     `json:"-"`
+        VideoId    int64     `json:"-"`
+        UserInfo   UserInfo  `json:"user"`
+        Content    string    `json:"content"`
+        LikeCount  int32       `json:"like_count"`
+        TeaseCount int32        `json:"tease_count"`
+        CreateDate string  `json:"create_date"`
+    }
+
+    Message {
+        Id         int64    `json:"id"`
+        Content    string `json:"content"`
+        CreateTime int64 `json:"create_time"`
+        FromUserId int64    `json:"from_user_id"`
+        ToUserId   int64    `json:"to_user_id"`
+    }
+
+
+)
+
+
+
+
+
+
