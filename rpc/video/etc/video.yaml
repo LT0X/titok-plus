@@ -1,0 +1,19 @@
+Name: video.rpc
+ListenOn: 127.0.0.1:8013
+Etcd:
+  Hosts:
+  - 192.168.169.128:2379
+  Key: video.rpc
+
+DBList:
+  Mysql:
+    Address: 127.0.0.1:3306
+    Username: root
+    Password: "147258369"
+    DBName: v_clip
+    TablePrefix: ""
+  Redis:
+    Host: 192.168.169.128
+    Port: "6379"
+    Password:
+    PoolSize: 100

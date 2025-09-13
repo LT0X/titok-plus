@@ -1,0 +1,5 @@
+*.mp4
+*.jpg
+*.png
+/config/wsl.yaml
+/config/docker.yaml
