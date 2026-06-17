@@ -389,54 +389,6 @@ Handler 层职责统一：**参数解析 + 鉴权 + 调用 service + 包装 resp
 
 ***
 
-## 安装与快速开始
-
-### 环境依赖
-
-- Go >= 1.20
-- MySQL 8.0+（需启用 ngram 分词器，`ngram_token_size=2`）
-- Redis 6.0+
-- RabbitMQ 3.x（带 management 插件）
-- etcd 3.5+
-- FFmpeg（视频抽帧，需加入 PATH）
-- 七牛云 OSS 账号（可选，当前默认本地存储）
-
-### Docker 部署（推荐）
-
-```bash
-# 一键启动 MySQL 主从 + Redis + RabbitMQ + Web 服务
-make up
-
-# 停止
-make down
-```
-
-`docker-compose.yaml` 部署 5 个服务，划分两个网络：
-
-- **shardingSphere 网络**（`192.168.0.0/24`）：web、mysql-master、mysql-slave
-- **backend 网络**：web、redis、rabbitmq
-
-### 本地开发
-
-1. 启动依赖中间件（MySQL/Redis/RabbitMQ/etcd）
-2. 启动三个 gRPC 微服务（Windows 用 `starttool.bat`，或分别执行）：
-
-```bash
-cd rpc/contact && go run contact.go -f etc/contact.yaml
-cd rpc/user    && go run user.go    -f etc/user.yaml
-cd rpc/video   && go run video.go   -f etc/video.yaml
-```
-
-3. 启动主 API 服务：
-
-```bash
-make run
-# 或
-go run .
-```
-
-4. 服务监听 `0.0.0.0:8010`
-
 ### MySQL 主从初始化
 
 主库执行 `config/mysql/master.sh`：创建同步账号 `syncuser`（REPLICATION SLAVE/CLIENT）+ 业务账号 `rw_user`。
@@ -528,78 +480,6 @@ ContactRpc:            # gRPC 服务发现（etcd）
 
 ***
 
-## 项目目录结构
-
-```
-titok-plus/
-├── main.go                       # 主服务入口（GoFiber）
-├── config/
-│   ├── config.go                 # 配置模型 + viper 加载（支持热更新）
-│   ├── config.yaml               # 主配置文件
-│   ├── mysql/                    # MySQL 主从配置与初始化脚本
-│   │   ├── master.cnf / slave.cnf
-│   │   └── master.sh / slave.sh
-│   └── rabbitmq/                 # RabbitMQ 配置
-│       ├── rabbitmq.config
-│       └── definitions.json
-├── database/                     # 数据访问层（本地直连 DB）
-│   ├── init.go                   # GORM 初始化 + 读写分离骨架
-│   ├── data_RPC.go               # RPC 客户端上下文（etcd 发现）
-│   ├── user.go / video.go / comment.go
-│   ├── favorite.go / relation.go / message.go
-├── model/                        # GORM 模型 + Transform 转换函数
-├── handler/                      # HTTP Handler 层（参数解析+鉴权）
-├── service/                      # 业务编排层（缓存+MQ+RPC）
-├── response/                     # DTO 响应结构
-├── router/
-│   └── route.go                  # 路由 + 中间件挂载
-├── package/
-│   ├── cache/                    # Redis 三库分片 + 布隆过滤器 + 分布式锁
-│   │   ├── init.go               # 三客户端 + 布隆过滤器初始化
-│   │   ├── user.go / video.go / comment.go
-│   │   ├── favorite.go / relation.go
-│   │   └── lock.go               # SetNX + Lua 分布式锁
-│   ├── mq/                       # RabbitMQ 生产者-消费者
-│   │   ├── init.go               # 共享 Channel + 自动重连
-│   │   ├── comment.go / favorite.go / relation.go
-│   ├── llm/                      # 讯飞星火 AI 集成
-│   │   ├── llm.go                # WebSocket 鉴权 + 流式对话
-│   │   └── chatgpt.go            # 虚拟用户注册 + 消息桥接
-│   ├── sensitive/                # 敏感词 Trie 树（已实现未接入）
-│   │   └── trie.go
-│   ├── constant/                 # 常量与全局变量
-│   │   ├── constant.go           # Redis key 前缀 + 业务常量
-│   │   └── global.go             # 全局 DB 实例
-│   ├── util/                     # 工具集
-│   │   ├── auth.go               # JWT 签发/解析/中间件
-│   │   ├── encryption.go         # bcrypt 密码加密
-│   │   ├── upload.go             # 本地写盘 + 七牛云 SDK
-│   │   ├── ffmpges.go            # FFmpeg 视频抽帧
-│   │   ├── snoyflake.go          # 雪花 ID 单例
-│   │   ├── generate.go           # 随机头像/背景/签名
-│   │   └── zap.go                # zap 日志初始化
-│   └── ws/
-│       └── msg.go                # WebSocket 即时消息（半成品）
-├── rpc/                          # 三个 gRPC 微服务（go-zero）
-│   ├── user/                     # user.rpc :8012
-│   │   ├── user.proto / user.go
-│   │   ├── user_client/user.go
-│   │   ├── etc/user.yaml
-│   │   └── internal/
-│   │       ├── config/ server/ svc/
-│   │       ├── logic/            # 10 个 logic 文件
-│   │       ├── model/            # user/favorite/video
-│   │       └── cache/            # Redis 初始化
-│   ├── video/                    # video.rpc :8013
-│   │   └── internal/logic/       # 12 个 logic（含 Feed/搜索/评论）
-│   └── contact/                  # contact.rpc :8011
-│       └── internal/logic/       # 7 个 logic（关注/私信）
-├── Dockerfile                    # Go 镜像构建
-├── docker-compose.yaml           # 5 服务编排（双网络）
-├── Makefile                      # run / up / down
-└── starttool.bat                 # Windows 本地启动脚本
-```
-
 ***
 
 ## 技术栈
@@ -618,7 +498,6 @@ titok-plus/
 | ID 生成 | sonyflake 雪花算法 |
 | 视频处理 | ffmpeg-go + disintegration/imaging |
 | 对象存储 | 七牛云 SDK v7（预留） |
-| AI 对话 | 讯飞星火（WebSocket 流式） |
 | 日志 | zap |
 | 配置 | viper（支持热更新） |
 | 并发工具 | go-zero mr.MapReduce |
