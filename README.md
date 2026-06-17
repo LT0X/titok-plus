@@ -1,5 +1,6 @@
 
-# 微视频
+# clip-video
+
 
 
 个人项目。一个短视频后端系统，采用 GoFiber API 网关 + gRPC 微服务 + RabbitMQ 异步解耦 + MySQL 主从 + Redis 多库分片的架构，提供视频发布、Feed 流、点赞、评论、关注、私信、搜索、AI 聊天等完整功能。
