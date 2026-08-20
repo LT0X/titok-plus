@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+//    goctl rpc protoc video.proto --go_out=. --go-grpc_out=. --zrpc_out=. --style=go_zero
+package video;
+option go_package="./video";
+
+message Request {
+  string ping = 1;
+}
+
+message Response {
+  string pong = 1;
+}
+
+message VideoInfo{
+    uint64  ID  = 1;
+    uint64  AuthorID = 2;
+    string  PlayURL = 3;
+    string  CoverURL = 4;
+    string  Title    = 5;
+    int64   PublishTime  = 6;
+    int64   FavoriteCount = 7;
+    int64   CommentCount =8;
+    string  Topic   =9;
+}
+
+message UserInfo{
+  uint64    ID = 1;
+  string    Username = 2;
+  string    Password = 3;
+  string    Avatar = 4;
+  string    BackgroundImage = 5;
+  string    Signature = 6;
+  int64     FollowCount = 7;
+  int64     FollowerCount = 8;
+  int64     TotalFavorited = 9;
+  int64     FavoriteCount = 10;
+  int64     WorkCount = 11;
+}
+
+message VideoData{
+  UserInfo UserInfo = 1;
+  VideoInfo VideoInfo = 2;
+}
+
+message Comment{
+  uint64       ID = 1 ;
+  uint64       VideoID = 2;
+  uint64       UserID  =3;
+  string       Content   =4;
+  int64       CreatedTime = 5;
+}
+
+message CreateVideoRequest{
+    VideoInfo  VideoID = 1;
+}
+
+message CreateVideoResponse{
+  uint64  VideoID = 1;
+}
+message SelectVideosByUserIDRequest{
+    uint64 UserID = 1;
+}
+message SelectVideosByUserIDResponse{
+  repeated VideoInfo Videos = 1;
+}
+
+message SelectVideoListByVideoIDRequest{
+  repeated uint64 VideoIDList = 1;
+
+}
+message SelectVideoListByVideoIDResponse{
+  repeated VideoInfo Videos = 1;
+}
+
+message UpdateVideoURLRequest{
+  string PlayURL = 1;
+  string CoverURl = 2;
+  uint64 VideoID = 3;
+}
+message UpdateVideoURLResponse{
+  int64 Reply = 1;
+}
+
+message SelectFeedVideoListRequest{
+  int32 NumberVideos  = 1;
+  int64 LastTime = 2;
+}
+
+message SelectFeedVideoListResponse{
+  repeated VideoData VideoDatas = 1;
+}
+
+message SelectFeedVideoByTopicRequest{
+  int32 numberVideos = 1;
+  int64 lastTime = 2;
+  string topic = 3;
+
+}
+message SelectFeedVideoByTopicResponse{
+  repeated VideoData VideoDatas = 1;
+}
+
+message  SearchVideoByKeywordRequest{
+  string  keyword = 1;
+}
+message  SearchVideoByKeywordResponse{
+  repeated  VideoInfo videInfos =1;
+}
+
+message CommentAddRequest{
+  Comment Comment = 1;
+}
+message CommentAddResponse{
+  int64 Reply = 1;
+}
+message CommentDeleteRequest{
+  //这里原来接口用string 存疑
+  uint64 CommentID  =1;
+  uint64 VideoID  = 2;
+  uint64 UserID = 3;
+}
+message CommentDeleteResponse{
+  Comment Comment = 1;
+}
+
+message GetCommentsByVideoIDRequest{
+  uint64 VideoID = 1;
+}
+message GetCommentsByVideoIDResponse{
+  repeated Comment Comments =1;
+}
+
+message GetCommentsByVideoIDFromMasterRequest{
+  uint64 VideoID = 1;
+}
+message GetCommentsByVideoIDFromMasterResponse{
+  repeated Comment Comment = 1;
+}
+
+service Video {
+  rpc Ping(Request) returns(Response);
+  rpc CreateVideo(CreateVideoRequest) returns(CreateVideoResponse);
+  rpc SelectVideosByUserID(SelectVideosByUserIDRequest) returns(SelectVideosByUserIDResponse);
+  rpc SelectVideoListByVideoID(SelectVideoListByVideoIDRequest) returns (SelectVideoListByVideoIDResponse);
+  rpc UpdateVideoURL(UpdateVideoURLRequest) returns(UpdateVideoURLResponse);
+  rpc SelectFeedVideoList(SelectFeedVideoListRequest)returns(SelectFeedVideoListResponse);
+  rpc SelectFeedVideoByTopic(SelectFeedVideoByTopicRequest) returns(SelectFeedVideoByTopicResponse);
+  rpc SearchVideoByKeyword(SearchVideoByKeywordRequest) returns(SearchVideoByKeywordResponse);
+  rpc CommentAdd(CommentAddRequest) returns(CommentAddResponse);
+  rpc CommentDelete( CommentDeleteRequest)returns(CommentDeleteResponse);
+  rpc GetCommentsByVideoID(GetCommentsByVideoIDRequest)returns(GetCommentsByVideoIDResponse);
+  rpc GetCommentsByVideoIDFromMaster(GetCommentsByVideoIDFromMasterRequest)returns(GetCommentsByVideoIDFromMasterResponse);
+}

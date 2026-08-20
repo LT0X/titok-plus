@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+//    goctl rpc protoc user.proto --go_out=. --go-grpc_out=. --zrpc_out=. --style=go_zero
+
+package user;
+option go_package="./user";
+
+message Request {
+  string ping = 1;
+}
+
+message Response {
+  string pong = 1;
+}
+
+message UserInfo{
+  uint64    ID = 1;
+  string    Username = 2;
+  string    Password = 3;
+  string    Avatar = 4;
+  string    BackgroundImage = 5;
+  string    Signature = 6;
+  int64     FollowCount = 7;
+  int64     FollowerCount = 8;
+  int64     TotalFavorited = 9;
+  int64     FavoriteCount = 10;
+  int64     WorkCount = 11;
+}
+
+message  CreateUserRequest{
+  UserInfo user = 1;
+}
+
+message CreateUserResponse{
+  uint64   UserID = 1;
+}
+
+message SelectUserByNameRequest{
+  string UserName = 1;
+}
+
+message SelectUserByNameResponse{
+  UserInfo user = 1;
+}
+
+message  SelectUserByIDRequest{
+  uint64  UserID = 1;
+}
+
+message  SelectUserByIDResponse{
+  UserInfo user =1;
+}
+
+message SelectWorkCountRequest{
+  uint64  UserID = 1;
+}
+message SelectWorkCountResponse{
+  int64  Count = 1;
+}
+
+message SelectUserListByIDsRequest{
+  repeated uint64 userIDs = 1;
+}
+
+message SelectUserListByIDsResponse{
+  repeated UserInfo Users = 1;
+}
+
+message FavoriteVideoRequest{
+  uint64 UserID = 1;
+  uint64 VideoID = 2;
+  int64 cnt  = 3;
+}
+message FavoriteVideoResponse{
+   int64 reply = 1;
+}
+
+message SelectFavoriteVideoByUserIDRequest{
+  //命名是应该USerID
+  uint64 UserID = 1;
+}
+
+message SelectFavoriteVideoByUserIDResponse{
+  repeated uint64  UserIDs = 1;
+}
+
+message UpdateUserInfoRequest{
+   uint64  UserID =1;
+    string  Avatar =2;
+    string  Username =4;
+    string  Signature =3;
+}
+message UpdateUserInfoResponse{
+  int64  reply  =1;
+  string AvatarUrl =2;
+}
+
+message SearchUserRequest{
+  string Username  =1;
+}
+message  SearchUserResponse{
+  repeated UserInfo UserInfos = 1;
+}
+
+
+service User {
+  rpc Ping(Request) returns(Response);
+  rpc CreateUser(CreateUserRequest)  returns(CreateUserResponse);
+  rpc SelectUserByName(SelectUserByNameRequest) returns(SelectUserByNameResponse);
+  rpc SelectUserByID(SelectUserByIDRequest) returns(SelectUserByIDResponse);
+  rpc SelectWorkCount(SelectWorkCountRequest) returns(SelectWorkCountResponse);
+  rpc SelectUserListByIDs(SelectUserListByIDsRequest) returns(SelectUserListByIDsResponse);
+  rpc FavoriteVideo(FavoriteVideoRequest) returns(FavoriteVideoResponse);
+  rpc SelectFavoriteVideoByUserID(SelectFavoriteVideoByUserIDRequest) returns(SelectFavoriteVideoByUserIDResponse);
+  rpc UpdateUserInfo(UpdateUserInfoRequest) returns(UpdateUserInfoResponse);
+  rpc SearchUser(SearchUserRequest) returns(SearchUserResponse);
+}

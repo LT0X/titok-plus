@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package contact;
+option go_package="./contact";
+
+//    goctl rpc protoc contact.proto --go_out=. --go-grpc_out=. --zrpc_out=. --style=go_zero
+
+message Request {
+  string ping = 1;
+}
+
+message Response {
+  string pong = 1;
+}
+
+
+message Message{
+   int64     ID  = 1;
+   string    Content =2;
+   int64     CreateTime =3;
+   uint64    FromUserID  =4;
+   int64     ToUserID  =5;
+}
+
+message CreateMessageRequest{
+  uint64 userID = 1;
+  uint64 toUserID = 2;
+  string content = 3;
+}
+message CreateMessageResponse{
+  uint64  Reply = 1;
+}
+
+message MessageListRequest{
+  uint64 UserID = 1;
+  uint64 ToUserID = 2;
+  int64  msgTime = 3;
+}
+
+message MessageListResponse{
+  repeated Message Massages = 1;
+}
+
+message GetMessageNewestRequest{
+  uint64 UserID = 1;
+  uint64 ToUserID = 2;
+}
+
+message GetMessageNewestResponse{
+  Message message = 1;
+}
+
+message FollowRequest{
+  uint64 UserID = 1;
+  uint64 ToUserID = 2;
+  int64  Cnt = 3;
+}
+
+message FollowResponse{
+  int64  Reply = 1;
+}
+
+message SelectFollowingByUserIDRequest{
+  uint64  UserID =1;
+}
+message SelectFollowingByUserIDResponse{
+  repeated uint64 UserID  = 1;
+}
+
+message  IsFollowedRequest{
+    int64  UserID = 1;
+    int64  ID = 2;
+}
+message  IsFollowedResponse{
+   bool  bool = 1;
+}
+message SelectFollowerByUserIDRequest{
+  uint64  UserID  =1;
+}
+message SelectFollowerByUserIDResponse{
+  repeated uint64 FollowerIDs = 1;
+}
+
+service Contact {
+  rpc Ping(Request) returns(Response);
+  rpc CreateMessage(CreateMessageRequest) returns(CreateMessageResponse);
+  rpc MessageList(MessageListRequest)returns(MessageListResponse);
+  rpc GetMessageNewest(GetMessageNewestRequest)returns(GetMessageNewestResponse);
+  rpc Follow(FollowRequest)returns(FollowResponse);
+  rpc SelectFollowingByUserID(SelectFollowingByUserIDRequest)returns(SelectFollowingByUserIDResponse);
+  rpc  SelectFollowerByUserID(SelectFollowerByUserIDRequest) returns(SelectFollowerByUserIDResponse);
+  rpc IsFollowed(IsFollowedRequest) returns(IsFollowedResponse);
+
+}
